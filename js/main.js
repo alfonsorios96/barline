@@ -1,73 +1,43 @@
 (function init() {
     'use strict';
 
-    /**
-     * @description
-     * 1 - Random progress
-     * 2 - Waiting stop
-     * 3 - Interrumped loading
-     * @type {number}
-     */
-    let loadingStatus = 1;
-    const FULL_BAR = 100;
+    class ProgressBar extends HTMLElement {
+        constructor() {
+            super();
+            this._initShadowContent();
+        }
 
-    /**
-     * @description Add event listeners to buttons.
-     */
-    const initButtons = () => {
-      document.getElementById('demo').addEventListener('click', () => {
-          animate();
-      });
-      document.getElementById('stop').addEventListener('click', () => {
-          loadingStatus = 2;
-      });
-      document.getElementById('block').addEventListener('click', () => {
-          loadingStatus = 3;
-      });
-    };
+        _initShadowContent() {
+            this.attachShadow({mode: 'open'});
+        }
 
-    /**
-     * @description Gets a random integer
-     * @param max - Max number posible
-     * @param min - Min number posible
-     * @returns {number} - random number
-     */
-    const getRandomInteger = (max, min) => {
-        return (Math.floor(Math.random() * (max - min + 1)) + min);
-    };
+        animate() {
+            const ANIMATE_LENGTH = 500, INCREMENT_PERCENT = 0.2;
+            const main = this.shadowRoot;
+            const progressWrapper = main.querySelector('.progress-wrap');
+            const progressBar = main.querySelector('.progress-bar');
 
-    /**
-     * @description Controller of the progressive bar
-     */
-    const animate = () => {
-        const barline = document.getElementById('barline');
-        let width = 1;
-        let id = setInterval(() => {
-            if (width >= FULL_BAR) {
-                clearInterval(id);
-                barline.style.width = 1;
-                loadingStatus = 1;
-            } else {
-                switch (loadingStatus){
-                    case 1:
-                        width += getRandomInteger(5,0);
-                        break;
-                    case 2:
-                        width += 20;
-                        break;
-                    case 3:
-                        if (width >= 90 && width < 100){
-                            width = 96;
-                        } else {
-                            width += getRandomInteger(5,0);
-                        }
-                        break;
+            let idInterval = setInterval(() => {
+                let progressPercent = this.getAttribute('progress') / 100;
+                if (progressPercent >= 1) {
+                    clearInterval(idInterval);
+                    progressBar.setAttribute('style', `width: 0px; height: 50px`);
+                } else {
+                    console.log(progressPercent);
+                    let getProgressWrapWidth = progressWrapper.offsetWidth;
+                    let progressTotal = (progressPercent + INCREMENT_PERCENT) * getProgressWrapWidth;
+                    progressBar.setAttribute('style', `width: ${progressTotal}px; height: 50px`);
+                    this.setAttribute('progress', (progressPercent + INCREMENT_PERCENT) * 100);
                 }
-                barline.style.width = width + '%';
-            }
-        }, 200);
-    };
+            }, ANIMATE_LENGTH);
+        }
+    }
 
-    initButtons();
+    window.customElements.define('progress-bar', ProgressBar);
 
+    const progressBarTemplate = document.querySelector('#progress-bar-template');
+    const customBarElement = document.querySelector('#custom-bar-element');
+    const node = document.importNode(progressBarTemplate.content, true);
+    customBarElement.shadowRoot.appendChild(node);
+    customBarElement.animate();
 })();
