@@ -1,0 +1,24 @@
+{
+  "name": "progress-bar",
+  "version": "1.0.0",
+  "description": "",
+  "dependencies": {
+    "express": "4.15.3"
+  },
+  "scripts": {
+    "dev": "nodemon -w js/ app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alfonsorios96/barline.git"
+  },
+  "author": "malforime",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alfonsorios96/barline/issues"
+  },
+  "homepage": "https://github.com/alfonsorios96/barline#readme",
+  "devDependencies": {
+    "nodemon": "1.11.0"
+  }
+}
